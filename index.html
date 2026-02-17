@@ -1,97 +1,211 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>ecoScan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <!--Librebria para las animaciones-->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="lib/leaflet-1.9.4/leaflet.css">
 </head>
+
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-success">
-    <div class="container">
-        <a class="navbar-brand" href="#">ecoScan</a>
-        <div class="collapse navbar-collapse show">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Cómo Funciona</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Centros de Reciclaje</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Consejos Ecológicos</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container" data-aos="fade-up">
+            <a class="navbar-brand" href="../index.html"><img class="me-2" src="img/logoEcoScan.png"
+                    alt="Logo de coScan">ecoScan</a>
 
-<section class="py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <h1>¡Descubre dónde reciclar tus residuos!</h1>
-                <p>Toma una foto y te diremos cómo reciclar correctamente.</p>
-                <div class="d-flex gap-3">
-                    <button class="btn btn-success">Tomar Foto</button>
-                    <button class="btn btn-outline-secondary" id="btnSubirFoto">Subir Imagen</button>
-                    <input type="file" id="fotoSubida" style="display:none;">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item px-2"><a class="nav-link" href="#comoFunciona">¿Cómo Funciona?</a>
+                    </li>
+                    <li class="nav-item px-2"><a class="nav-link" href="html/consejosEcologicos.html">Consejos
+                            Ecológicos</a></li>
+                    <li class="nav-item px-2"><a class="nav-link" href="#mapa">Centros de
+                            Reciclaje</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="containerPrincipal">
+        <div class="container" data-aos="fade-up" data-aos-delay="400">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="display-5 display-md-4 fw-bold"> ¡Descubre dónde reciclar tus residuos!</h1>
+                    <p class="lead">Toma una foto y te diremos cómo reciclar correctamente.</p>
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <button class="btn btn-success">Tomar Foto</button>
+                        <button class="btn btn-outline-secondary" id="btnSubirFoto">Subir Imagen</button>
+                        <input type="file" id="fotoSubida" style="display:none;">
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="img/phone.png" class="img-fluid">
                 </div>
             </div>
-            <div class="col-md-6 text-center">
-                <img src="img/phone.png" class="img-fluid">
-            </div>
         </div>
-        <div class="text-center py-5">
-            <img id="resultadoImagen" src="" alt="">
-        </div>
-    </div>
-</section>
+    </section>
+    
+    <section class="seccion-ods d-flex align-items-center">
+        <div class="container text-center text-white" data-aos="fade-up">
 
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>Escanea tus Residuos</h5>
-                        <p>Toma una foto y descubre qué tipo de residuo es.</p>
+            <h2 class="fw-bold mb-4">
+                Pequeñas acciones generan grandes cambios
+            </h2>
+
+            <p class="lead mb-4">
+                Separar correctamente tus residuos no solo reduce la contaminación,
+                también impulsa un futuro más responsable y sostenible.
+                Con ecoScan, transformar hábitos diarios es más fácil que nunca.
+            </p>
+
+            <h5 class="fw-bold mb-4">
+                Nuestro compromiso está alineado con los Objetivos de Desarrollo Sostenible:
+            </h5>
+
+            <div class="row justify-content-center g-4">
+                <div class="col-4 col-md-2">
+                    <img src="img/ods9.jpg" class="img-fluid ods-icon">
+                    <p class="mt-2">ODS 9</p>
+                </div>
+
+                <div class="col-4 col-md-2">
+                    <img src="img/ods11.jpg" class="img-fluid ods-icon">
+                    <p class="mt-2">ODS 11</p>
+                </div>
+
+                <div class="col-4 col-md-2">
+                    <img src="img/ods13.jpg" class="img-fluid ods-icon">
+                    <p class="mt-2">ODS 13</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!--Seccion de funcionalidad-->
+    <section id="comoFunciona" class="pasos py-5 bg-light">
+        <div class="container text-center" data-aos="fade-up" data-aos-delay="0">
+            <h2 class="mb-4 fw-bold">¿Cómo funciona ecoScan?</h2>
+            <p class="mb-5 lead">Sigue estos pasos simples para ayudar al medio ambiente:</p>
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <img src="img/TutorialPaso1.png" class="mb-3" alt="Paso 1">
+                            <h5 class="fw-bold">1. Sube o toma una foto</h5>
+                            <p>Captura el residuo que deseas reciclar.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <img src="img/TutorialPaso2.png" class="img-fluid mb-3" alt="Paso 2">
+                            <h5 class="fw-bold">2. Identificamos el residuo</h5>
+                            <p>Te decimos de qué tipo de material se trata.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <img src="img/TutorialPaso3.png" class="img-fluid mb-3" alt="Paso 3">
+                            <h5 class="fw-bold">3. Encuentra dónde reciclar</h5>
+                            <p>Te mostramos los centros de reciclajes más cercano.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>Encuentra el Centro Cercano</h5>
-                        <p>Te indicamos el lugar correcto para reciclar.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>Aprende a Reciclar</h5>
-                        <p>Consejos y guías para un reciclaje responsable.</p>
-                    </div>
+        </div>
+    </section>
+
+
+    <section class="py-4 py-md-5 ">
+        <div class="container">
+            <div class="card p-4">
+                <h4>Reciclaje Cercano:</h4>
+                <h5>Centro de Reciclaje EcoVerde</h5>
+                <p>Av. Siempre Verde 123, Ciudad</p>
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <button class="btn btn-success">Ver Mapa</button>
+                    <button class="btn btn-outline-secondary">Cómo Llegar</button>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="py-5">
-    <div class="container">
-        <div class="card p-4">
-            <h4>Reciclaje Cercano:</h4>
-            <h5>Centro de Reciclaje EcoVerde</h5>
-            <p>Av. Siempre Verde 123, Ciudad</p>
-            <div class="d-flex gap-3">
-                <button class="btn btn-success">Ver Mapa</button>
-                <button class="btn btn-outline-secondary">Cómo Llegar</button>
+
+    <section id="mapa" class="py-5 bg-light">
+        <div class="container" data-aos="fade-up">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">Centros de reciclaje</h2>
+                <p class="lead">Encuentra los puntos más cercanos a tu ubicación.</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-10 col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row text-center text-md-start">
+
+                <div class="col-md-6 mb-3">
+                    <h5 class="fw-bold">ecoScan</h5>
+                    <p class="small">
+                        Ayudando a cuidar el medio ambiente a través del reciclaje inteligente.
+                    </p>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <h6 class="fw-bold">Contacto</h6>
+                    <p class="small mb-1">📍 UTL, México</p>
+                    <p class="small mb-1">📧 contacto@ecoscan.com</p>
+                    <p class="small">📞 +52 123 456 7890</p>
+                </div>
+
+            </div>
+
+            <hr class="border-light">
+
+            <div class="text-center small">
+                © 2026 ecoScan - Todos los derechos reservados
             </div>
         </div>
-    </div>
-</section>
+    </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/subirArchivo.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/subirArchivo.js"></script>
+    <script src="lib/leaflet-1.9.4/leaflet-src.js"></script>
+    <script src="js/mapaCentrosReciclaje.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+
 </body>
+
 </html>
