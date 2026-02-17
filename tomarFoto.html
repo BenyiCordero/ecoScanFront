@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>ecoScan - Tomar Foto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">ecoScan</a>
+        <div class="collapse navbar-collapse show">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#">Tomar Foto</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- SECCIÓN CÁMARA -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+
+            <div class="col-lg-6 col-md-8 text-center">
+
+                <h2 class="mb-4">Escanea tu Residuo</h2>
+
+                <div class="card shadow p-4">
+
+                    <!-- Cámara -->
+                    <video id="video" class="w-100 rounded mb-3" autoplay></video>
+
+                    <!-- Botones -->
+                    <div class="d-grid gap-2">
+                        <button id="btnCapturar" class="btn btn-success">
+                            Tomar Foto
+                        </button>
+                        <button id="btnReintentar" class="btn btn-outline-secondary">
+                            Reintentar
+                        </button>
+                    </div>
+
+                    <!-- Canvas  -->
+                    <canvas id="canvas" class="d-none"></canvas>
+
+                    
+                    <div class="mt-4">
+                        <h5>Foto Capturada:</h5>
+                        <img id="foto" class="img-fluid rounded mt-2">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/scanner.js"></script>
+
+</body>
+</html>
