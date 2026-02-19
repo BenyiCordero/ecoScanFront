@@ -6,6 +6,7 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
+    font-family: 'Poppins', sans-serif;
 }
 
 .seccion-ods {
@@ -21,7 +22,35 @@ body {
 
 .ods-icon {
     border-radius: 12px;
-    transition: transform 0.3s ease;
+}
+
+.consejos {
+    position: relative;
+    background: url('../img/consejos.jpg') no-repeat center center/cover;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* efecto elegante */
+}
+
+.consejos::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55); /* Ajusta entre 0.4 y 0.6 */
+}
+
+
+.consejos .glass:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.consejos .glass {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 #map {
@@ -45,7 +74,7 @@ h1 {
 .card {
     border: 5px solid transparent;
     border-radius: 15px;
-    transition: all 0.2s ease;
+    transition: all 0.5s ease;
 }
 
 .card:hover {

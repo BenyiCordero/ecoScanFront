@@ -16,20 +16,20 @@ async function startCamera() {
         console.log("Iniciando cámara...");
 
         const stream = await navigator.mediaDevices.getUserMedia({
-            video: { 
+            video: {
                 facingMode: "environment", // Intenta usar la trasera
                 width: { ideal: 1280 },
                 height: { ideal: 720 }
             },
             audio: false
         });
-        
+
         videoElement.srcObject = stream;
-        
+
         // CRUCIAL: Esto faltaba en el primer código. 
         // Sin 'playsinline', iOS bloquea el video en pantalla completa o no lo muestra.
-        videoElement.setAttribute("playsinline", true); 
-        
+        videoElement.setAttribute("playsinline", true);
+
         // Aseguramos que arranque la reproducción
         await videoElement.play();
         console.log("Cámara lista.");
@@ -56,7 +56,7 @@ if (captureButton) {
 
         // Verificar que el video tenga datos antes de capturar
         if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-            
+
             // Dibujar en canvas
             canvasElement.width = videoElement.videoWidth;
             canvasElement.height = videoElement.videoHeight;
@@ -65,12 +65,14 @@ if (captureButton) {
 
             // Convertir a base64 y mostrar preview
             const base64 = canvasElement.toDataURL("image/jpeg");
-            fotoPreview.src = base64;
-            fotoPreview.style.display = "block"; // Asegurar que se vea
+            if (fotoPreview) {
+                fotoPreview.src = base64;
+                fotoPreview.classList.remove("d-none");
+            }
 
             // Llamar a OpenAI
             resultContainer.innerHTML = '<div class="alert alert-info">Analizando residuo... ♻️</div>';
-            
+
             try {
                 const response = await fetch("https://api.openai.com/v1/chat/completions", {
                     method: "POST",
@@ -94,13 +96,13 @@ if (captureButton) {
                 });
 
                 const data = await response.json();
-                
+
                 if (data.error) {
                     throw new Error(data.error.message);
                 }
-                
+
                 resultContainer.innerHTML = `<div class="alert alert-success">${data.choices[0].message.content}</div>`;
-                
+
             } catch (error) {
                 console.error(error);
                 resultContainer.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
