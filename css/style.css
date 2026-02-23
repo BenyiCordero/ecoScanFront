@@ -1,12 +1,24 @@
 
 html{
     scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
+    height: 100%;
 }
 body {
     margin: 0;
     display: flex;
     flex-direction: column;
     font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+}
+
+.info{
+    padding: 10px 15px;
+    background: #ffffff;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 10px; 
 }
 
 .seccion-ods {
@@ -54,7 +66,7 @@ body {
 }
 
 #map {
-    height: 500px;
+    height: 550px;
     width: 100%;
     border-radius: 12px;
 }
