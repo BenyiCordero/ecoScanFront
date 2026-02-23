@@ -183,14 +183,19 @@
     <!--Seccion del mapa-->
     <section id="mapa" class="py-5 bg-light">
         <div class="container" data-aos="fade-up">
-            <div class="text-center mb-4">
+            <div class="text-center mb-3">
                 <h2 class="fw-bold">Centros de reciclaje</h2>
                 <p class="lead">Encuentra los puntos más cercanos a tu ubicación.</p>
             </div>
             <div class="row justify-content-center">
-                <div class="col-12 col-md-10 col-lg-8">
+                <div class="col-12 col-md-10">
                     <div class=" shadow-sm">
                         <div class="card-body p-0">
+                            <div class="text-center mb-3">
+                                <button class="btn btn-success" onclick="obtenerUbicacion()">
+                                    Usar mi ubicación
+                                </button>
+                            </div>
                             <div id="map"></div>
                         </div>
                     </div>
