@@ -64,7 +64,7 @@ async function mostrarRecicladoras() {
 cargarRecicladoras();
 
 const iconoUsuario = L.icon({
-    iconUrl: "/public/img/MiUbicacion.png",
+    iconUrl: "/img/MiUbicacion.png",
     iconSize: [60, 60],     // tamaño del círculo
     iconAnchor: [30, 30]    // centro exacto del icono
 })
