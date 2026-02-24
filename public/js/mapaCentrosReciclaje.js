@@ -1,5 +1,5 @@
 let recicladorasActivas = [];
-url = 'https://administracion.smarttech.icu/api/recicladora/horarios?idRecicladora=';
+url = 'https://administracion.smarttech/api/recicladora/horarios?idRecicladora=';
 
 const iconoRecicladoras = L.icon({
     iconUrl: "/img/recicladoras.png",
