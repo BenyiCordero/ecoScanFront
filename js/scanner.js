@@ -19,13 +19,13 @@
     let recicladorasActivas = [];
     let scannerMap = null; // Usamos un nombre único para nuestro mapa
 
-    const urlMateriales = 'https://administracion.smarttech.icu/api/recicladora/materiales?idRecicladora=';
-    const urlHorarios = 'https://administracion.smarttech.icu/api/recicladora/horarios?idRecicladora=';
+    const urlMateriales = '/api/recicladora/materiales?idRecicladora=';
+    const urlHorarios = '/api/recicladora/horarios?idRecicladora=';
 
     // 1. Cargar materiales al inicio
     async function inicializarScanner() {
         try {
-            const res = await fetch('https://administracion.smarttech.icu/api/material/getall');
+            const res = await fetch('/api/material/getall');
             const data = await res.json();
             categoriasPermitidas = data.map(m => m.nombreMaterial).join(", ");
             startCamera();
@@ -103,7 +103,7 @@
 
     // 3. Lógica del Mapa (Adaptada para no chocar)
     async function buscarCentrosCompatibles() {
-        const resActivas = await fetch('https://administracion.smarttech.icu/api/recicladora/activas').then(r => r.json());
+        const resActivas = await fetch('/api/recicladora/activas').then(r => r.json());
         let validas = [];
 
         for (let r of resActivas) {
