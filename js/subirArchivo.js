@@ -119,7 +119,7 @@ async function analizarImagenOpenIA(imgBase64) { //funcion para comunicarse con 
             return;
         }
         await cargarRecicladoras();
-        resultado.innerHTML = `<div class="alert alert-success"> Tipo : ${tipoMaterial}</div>`;
+        resultado.innerHTML = `<div class="alert alert-success">Detectado: <strong>${tipoMaterial}</strong>. Buscando centros...</div>`;
         await validarMaterialEnRecicladora();
 
 
@@ -152,7 +152,7 @@ async function ImplementarMapa() {
     if (map) {
         map.remove();
     }
-    let contenido = `<div class="container" data-aos="fade-up">
+    let contenido = `<div id="container" class="container" data-aos="fade-up">
                 <div class="text-center mb-4">
                     <h2 class="fw-bold">Recicladoras que aceptan ${tipoMaterial}</h2>
                     <p class="lead">Encuentra los puntos más cercanos a tu ubicación.</p>
@@ -186,37 +186,38 @@ async function ImplementarMapa() {
 
     const iconoRecicladoras = L.icon({
         iconUrl: "../img/recicladoras.png",
-        iconSize: [60, 60],     
-        iconAnchor: [30, 30]    
+        iconSize: [60, 60],
+        iconAnchor: [30, 30]
     });
 
+    document.getElementById('container').scrollIntoView({ behavior: 'smooth' });
+
+
     for (let recicladora of recicladorasValidasPorMaterial) {
-        const response = await fetch(urlHorarios + recicladora.idRecicladora)
-            .then(r => r.json());
-        let textoHorarios = "";
-        response.forEach(horarios => {
-            textoHorarios += horarios.diaSemana + " : " + horarios.horaApertura + " - " + horarios.horaCierre + "<br>";
-        });
+        const horas = await fetch(urlHorarios + recicladora.idRecicladora).then(r => r.json());
+        let popupContent = `<b>${recicladora.nombreRecicladora}</b><br>Acepta ${tipoMaterial}<br><small>`;
+        horas.forEach(h => popupContent += `${h.diaSemana}: ${h.horaApertura}-${h.horaCierre}<br>`);
         L.marker(
             [recicladora.latitud, recicladora.longitud],
             { icon: iconoRecicladoras }
         )
-        .bindPopup(
-            "<b>" + recicladora.nombreRecicladora + "</b><br>" +
-            "Horarios:<br>" + textoHorarios
-        ).addTo(map);
+            .bindPopup(
+                popupContent + "</small>"   
+            ).addTo(map);
     }
 
 }
 
+const iconoUsuario = L.icon({
+    iconUrl: "../img/MiUbicacion.png",
+    iconSize: [40, 40],     // tamaño del círculo
+    iconAnchor: [20, 20]    // centro exacto del icono
+})
+let marker;
+
 //Eso la hace GLOBAL, y el boton onclick si puede verla
 window.obtenerUbicacion = function () {
-    const iconoUsuario = L.icon({
-        iconUrl: "../img/MiUbicacion.png",
-        iconSize: [40, 40],     // tamaño del círculo
-        iconAnchor: [20, 20]    // centro exacto del icono
-    })
-    let marker;
+
     // Funcion para actualizar ubicación
     map.on('locationfound', function (e) {
         // Si no existe el marcador lo pone
@@ -230,6 +231,8 @@ window.obtenerUbicacion = function () {
 
     // Detectar ubicacion en tiempo real
     map.locate({
+        setView: true,   // Centra automáticamente el mapa
+        maxZoom: 14,
         watch: true, // hace que sea en tiempo real
         enableHighAccuracy: true
     });
