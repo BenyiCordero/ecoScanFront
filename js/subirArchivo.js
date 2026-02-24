@@ -15,8 +15,8 @@ let recicladoraMateriales = [];
 let recicladorasActivas = [];
 let recicladorasValidasPorMaterial = [];
 let map;
-let urlMateriales = 'https://administracion.smarttech.icu/api/recicladora/materiales?idRecicladora=';
-let urlHorarios = 'https://administracion.smarttech.icu/api/recicladora/horarios?idRecicladora=';
+let urlMateriales = '/api/recicladora/materiales?idRecicladora=';
+let urlHorarios = '/api/recicladora/horarios?idRecicladora=';
 
 boton.addEventListener('click', () => {
     foto.click();
@@ -38,7 +38,7 @@ foto.addEventListener('change', (e) => {
 
 async function cargarRecicladoras() {
     try {
-        const resultados = await fetch('https://administracion.smarttech.icu/api/recicladora/activas', { method: 'GET' })
+        const resultados = await fetch('/api/recicladora/activas', { method: 'GET' })
             .then(r => r.json());
         recicladorasActivas = resultados;
     } catch (error) {
@@ -48,7 +48,7 @@ async function cargarRecicladoras() {
 
 async function cargarMateriales() {
     try {
-        const resultado = await fetch('https://administracion.smarttech.icu/api/material/getall')
+        const resultado = await fetch('/api/material/getall')
             .then(r => r.json());
         categoriasMateriales = resultado;
         categoriasPermitidas = categoriasMateriales //Separa los materiales con comas
