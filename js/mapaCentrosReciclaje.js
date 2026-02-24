@@ -20,8 +20,8 @@ var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 var info = L.control();
 
-info.onAdd = function(map){
-    this._div = L.DomUtil.create('div','info');
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info');
     this._div.innerHTML = "<h6>Centros de Reciclaje Activos</h6>";
     return this._div;
 };
@@ -53,23 +53,25 @@ async function mostrarRecicladoras() {
             [recicladora.latitud, recicladora.longitud],
             { icon: iconoRecicladoras }
         )
-        .bindPopup(
-            "<b>" + recicladora.nombreRecicladora + "</b><br>" +
-            "Horarios:<br>" + textoHorarios
-        ).addTo(map);
+            .bindPopup(
+                "<b>" + recicladora.nombreRecicladora + "</b><br>" +
+                "Horarios:<br>" + textoHorarios
+            ).addTo(map);
     }
 
 }
 
 cargarRecicladoras();
 
+const iconoUsuario = L.icon({
+    iconUrl: "img/MiUbicacion.png",
+    iconSize: [60, 60],     // tamaño del círculo
+    iconAnchor: [30, 30]    // centro exacto del icono
+})
+let marker;
+
 function obtenerUbicacion() {
-    const iconoUsuario = L.icon({
-        iconUrl: "img/MiUbicacion.png",
-        iconSize: [40, 40],     // tamaño del círculo
-        iconAnchor: [20, 20]    // centro exacto del icono
-    })
-    let marker;
+
     // Funcion para actualizar ubicación
     map.on('locationfound', function (e) {
         // Si no existe el marcador lo pone
@@ -83,6 +85,8 @@ function obtenerUbicacion() {
 
     // Detectar ubicacion en tiempo real
     map.locate({
+        setView: true,   // Centra automáticamente el mapa
+        maxZoom: 14, 
         watch: true, // hace que sea en tiempo real
         enableHighAccuracy: true
     });
