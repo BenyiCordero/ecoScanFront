@@ -170,7 +170,7 @@
         }).addTo(scannerMap);
 
         const icon = L.icon({
-            iconUrl: "/public/img/recicladoras.png", // Ruta corregida según tu index
+            iconUrl: "../img/recicladoras.png", // Ruta corregida según tu index
             iconSize: [50, 50],
             iconAnchor: [25, 25]
         });
@@ -186,7 +186,7 @@
         }
     }
     const iconoUsuario = L.icon({
-        iconUrl: "/public/img/MiUbicacion.png",
+        iconUrl: "../img/MiUbicacion.png",
         iconSize: [40, 40],     // tamaño del círculo
         iconAnchor: [20, 20]    // centro exacto del icono
     })

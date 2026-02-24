@@ -209,7 +209,7 @@ async function ImplementarMapa() {
 }
 
 const iconoUsuario = L.icon({
-    iconUrl: "/public/img/MiUbicacion.png",
+    iconUrl: "../img/MiUbicacion.png",
     iconSize: [40, 40],     // tamaño del círculo
     iconAnchor: [20, 20]    // centro exacto del icono
 })

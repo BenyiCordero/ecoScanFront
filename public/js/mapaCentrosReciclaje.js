@@ -2,7 +2,7 @@ let recicladorasActivas = [];
 url = '/api/recicladora/horarios?idRecicladora=';
 
 const iconoRecicladoras = L.icon({
-    iconUrl: "/public/img/recicladoras.png",
+    iconUrl: "../img/recicladoras.png",
     iconSize: [60, 60],
     iconAnchor: [30, 30]
 });
@@ -91,4 +91,3 @@ function obtenerUbicacion() {
         enableHighAccuracy: true
     });
 }
-
