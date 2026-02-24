@@ -1,5 +1,5 @@
 let recicladorasActivas = [];
-url = 'https://administracion.smarttech.icu/api/recicladora/horarios?idRecicladora=';
+url = '/api/recicladora/horarios?idRecicladora=';
 
 const iconoRecicladoras = L.icon({
     iconUrl: "/img/recicladoras.png",
@@ -31,7 +31,7 @@ info.addTo(map);
 async function cargarRecicladoras() {
     try {
 
-        const resultados = await fetch('https://administracion.smarttech.icu/api/recicladora/activas')
+        const resultados = await fetch('/api/recicladora/activas')
             .then(r => r.json());
         recicladorasActivas = resultados;
         mostrarRecicladoras();
