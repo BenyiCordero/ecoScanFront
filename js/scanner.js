@@ -1,117 +1,158 @@
-// scanner.js
+// scanner.js - Versión Adaptada (Sin conflictos)
 
-// 1. SEGURIDAD: Usamos la variable de entorno de Vite
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+(function() { // Encapsulamos en una función anónima para no chocar variables
+    const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
-// Elementos del DOM
-const videoElement = document.getElementById("video");
-const canvasElement = document.getElementById("canvas");
-const captureButton = document.getElementById("btnCapturar");
-const resultContainer = document.getElementById("resultado");
-const fotoPreview = document.getElementById("foto");
+    // Elementos del DOM
+    const videoElement = document.getElementById("video");
+    const canvasElement = document.getElementById("canvas");
+    const captureButton = document.getElementById("btnCapturar");
+    const resultContainer = document.getElementById("resultado");
+    const fotoPreview = document.getElementById("foto");
+    
+    // Referencia al contenedor del mapa del INDEX
+    const contenedorMapaIndex = document.getElementById('map'); 
 
-// 2. CÁMARA ROBUSTA (La lógica del código que sí funcionaba)
-async function startCamera() {
-    try {
-        console.log("Iniciando cámara...");
+    // Variables internas del scanner
+    let tipoMaterial = "";
+    let categoriasPermitidas = "";
+    let recicladorasActivas = [];
+    let scannerMap = null; // Usamos un nombre único para nuestro mapa
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: "environment", // Intenta usar la trasera
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            },
-            audio: false
+    const urlMateriales = 'https://administracion.smarttech.icu/api/recicladora/materiales?idRecicladora=';
+    const urlHorarios = 'https://administracion.smarttech.icu/api/recicladora/horarios?idRecicladora=';
+
+    // 1. Cargar materiales al inicio
+    async function inicializarScanner() {
+        try {
+            const res = await fetch('https://administracion.smarttech.icu/api/material/getall');
+            const data = await res.json();
+            categoriasPermitidas = data.map(m => m.nombreMaterial).join(", ");
+            startCamera();
+        } catch (e) { console.error("Error inicial:", e); }
+    }
+
+    async function startCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: "environment" },
+                audio: false
+            });
+            videoElement.srcObject = stream;
+            videoElement.setAttribute("playsinline", true);
+            await videoElement.play();
+        } catch (err) { console.error("Cámara no lista:", err); }
+    }
+
+    // 2. Lógica de captura
+    if (captureButton) {
+        captureButton.addEventListener("click", async () => {
+            if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+                canvasElement.width = videoElement.videoWidth;
+                canvasElement.height = videoElement.videoHeight;
+                canvasElement.getContext("2d").drawImage(videoElement, 0, 0);
+                const base64 = canvasElement.toDataURL("image/jpeg");
+                
+                if (fotoPreview) {
+                    fotoPreview.src = base64;
+                    fotoPreview.classList.remove("d-none");
+                }
+                analizarImagen(base64);
+            }
         });
+    }
 
-        videoElement.srcObject = stream;
+    async function analizarImagen(base64) {
+        resultContainer.innerHTML = '<div class="alert alert-info shadow-sm">Identificando material... ♻️</div>';
+        try {
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-4o-mini",
+                    response_format: { type: "json_object" },
+                    messages: [{
+                        role: "user",
+                        content: [
+                            { type: "text", text: `Clasifica el residuo en una de estas categorías: ${categoriasPermitidas}. Responde JSON: {"tipo": "Exactamente el nombre"}. Si no es claro: {"tipo": "No valido"}` },
+                            { type: "image_url", image_url: { url: base64 } }
+                        ]
+                    }]
+                })
+            });
 
-        // CRUCIAL: Esto faltaba en el primer código. 
-        // Sin 'playsinline', iOS bloquea el video en pantalla completa o no lo muestra.
-        videoElement.setAttribute("playsinline", true);
+            const data = await response.json();
+            const resIA = JSON.parse(data.choices[0].message.content);
+            tipoMaterial = resIA.tipo;
 
-        // Aseguramos que arranque la reproducción
-        await videoElement.play();
-        console.log("Cámara lista.");
+            if (tipoMaterial === "No valido") {
+                resultContainer.innerHTML = `<div class="alert alert-warning">No pudimos identificar el material. intenta de nuevo.</div>`;
+                return;
+            }
 
-    } catch (err) {
-        console.error("Error cámara:", err);
-        // Mensaje de error útil
-        if (location.hostname !== 'localhost' && location.protocol !== 'https:') {
-            alert("⚠️ Error de seguridad: La cámara solo funciona en HTTPS o localhost.");
-        } else {
-            alert("No se pudo iniciar la cámara: " + err.message);
+            resultContainer.innerHTML = `<div class="alert alert-success">Detectado: <strong>${tipoMaterial}</strong>. Buscando centros...</div>`;
+            await buscarCentrosCompatibles();
+
+        } catch (error) {
+            resultContainer.innerHTML = `<div class="alert alert-danger">Error de conexión.</div>`;
         }
     }
-}
 
-// Lógica del botón
-if (captureButton) {
-    captureButton.addEventListener("click", async () => {
-        // Validación de API KEY
-        if (!API_KEY) {
-            alert("Error: No se encontró la API KEY en las variables de entorno (.env).");
-            return;
+    // 3. Lógica del Mapa (Adaptada para no chocar)
+    async function buscarCentrosCompatibles() {
+        const resActivas = await fetch('https://administracion.smarttech.icu/api/recicladora/activas').then(r => r.json());
+        let validas = [];
+
+        for (let r of resActivas) {
+            const materiales = await fetch(urlMateriales + r.idRecicladora).then(res => res.json());
+            if (materiales.some(m => m.nombreMaterial === tipoMaterial)) {
+                validas.push(r);
+            }
         }
 
-        // Verificar que el video tenga datos antes de capturar
-        if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+        renderizarMapaScanner(validas);
+    }
 
-            // Dibujar en canvas
-            canvasElement.width = videoElement.videoWidth;
-            canvasElement.height = videoElement.videoHeight;
-            const ctx = canvasElement.getContext("2d");
-            ctx.drawImage(videoElement, 0, 0);
-
-            // Convertir a base64 y mostrar preview
-            const base64 = canvasElement.toDataURL("image/jpeg");
-            if (fotoPreview) {
-                fotoPreview.src = base64;
-                fotoPreview.classList.remove("d-none");
-            }
-
-            // Llamar a OpenAI
-            resultContainer.innerHTML = '<div class="alert alert-info">Analizando residuo... ♻️</div>';
-
-            try {
-                const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-4o-mini",
-                        messages: [
-                            {
-                                role: "user",
-                                content: [
-                                    { type: "text", text: "Eres un experto en reciclaje. Clasifica este residuo. Responde SOLO con este formato: Tipo: [tipo], Contenedor: [color], ¿Reciclable?: [Sí/No]." },
-                                    { type: "image_url", image_url: { url: base64 } }
-                                ]
-                            }
-                        ],
-                        max_tokens: 150
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
-
-                resultContainer.innerHTML = `<div class="alert alert-success">${data.choices[0].message.content}</div>`;
-
-            } catch (error) {
-                console.error(error);
-                resultContainer.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
-            }
-        } else {
-            alert("La cámara aún no está lista. Espera un segundo.");
+    function renderizarMapaScanner(centros) {
+        // SEGURIDAD: Si el mapa de tu compañero (u otro anterior) existe, lo eliminamos
+        // Leaflet guarda la instancia en el contenedor. Si hay una, la limpiamos.
+        if (window.map) { 
+            window.map.remove(); 
+            window.map = null;
         }
-    });
-}
+        if (scannerMap) {
+            scannerMap.remove();
+        }
 
-// Arrancar
-startCamera();
+        // Scroll suave hasta el mapa para que el usuario vea el resultado
+        document.getElementById('mapa').scrollIntoView({ behavior: 'smooth' });
+
+        scannerMap = L.map('map').setView([21.125877, -101.673257], 12);
+        window.map = scannerMap; // Sincronizamos con la global por si el botón "Mi ubicación" la usa
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(scannerMap);
+
+        const icon = L.icon({
+            iconUrl: "img/recicladoras.png", // Ruta corregida según tu index
+            iconSize: [50, 50],
+            iconAnchor: [25, 25]
+        });
+
+        centros.forEach(async c => {
+            const horas = await fetch(urlHorarios + c.idRecicladora).then(r => r.json());
+            let popupContent = `<b>${c.nombreRecicladora}</b><br>Acepta ${tipoMaterial}<br><small>`;
+            horas.forEach(h => popupContent += `${h.diaSemana}: ${h.horaApertura}-${h.horaCierre}<br>`);
+            
+            L.marker([c.latitud, c.longitud], { icon: icon })
+                .bindPopup(popupContent + "</small>")
+                .addTo(scannerMap);
+        });
+    }
+
+    inicializarScanner();
+})();
